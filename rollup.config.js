@@ -4,7 +4,7 @@ import babel from 'rollup-plugin-babel'
 
 
 export default {
-  input: './src/main.js',
+  input: './src/parseHTML.js',
   output: {
     file: 'bundle.js',
     format: 'cjs'

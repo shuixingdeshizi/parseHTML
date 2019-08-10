@@ -6,10 +6,10 @@
   "scripts": {
     "build:cjs": "rollup --config --output.file ./dist/parse-html.cjs.js -f cjs",
     "build:amd": "rollup --config --output.file ./dist/parse-html.amd.js -f amd",
-    "build:es": "rollup -c -o ./dist/mvvm.es.js -f es",
-    "build:umd": "rollup -c -o ./dist/parse-html.umd.js -f umd -n parse",
+    "build:es": "rollup -c -o ./dist/parse-html.es.js -f es",
+    "build:umd": "rollup -c -o ./dist/parse-html.umd.js -f umd -n parseHTML",
     "build": "npm run  build:cjs && npm run build:amd && npm run build:es && npm run build:umd",
-    "dev": "rollup -c -o ./dist/parse-html.umd.js -f umd -n parse -w"
+    "dev": "rollup -c -o ./dist/parse-html.umd.js -f umd -n parseHTML -w"
   },
   "author": "",
   "license": "ISC",
