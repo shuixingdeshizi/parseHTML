@@ -8,8 +8,24 @@
   var qnamcCapture = '(' + ncname + ')';
   var startTagOpen = new RegExp('^<' + qnamcCapture);
   var startTagClose = new RegExp('^\s*(\/?)>');
-  var endTag = new RegExp('^<\/' + qnamcCapture + '>');
-  var index;
+  var endTag = new RegExp('^<\/' + qnamcCapture + '>'); // const singleAttrIndentifier = /([^\s*"'<>/=]+)/
+  // const singleAttrAssign = /(?:=)/
+  // const singleAttrValue = [
+  //   /"([^"])"+/.source,
+  //   /'([^'])'+/.source,
+  //   /([^\s"'=<>]+)/.source
+  // ]
+  // const attribute = new RegExp(
+  //   '^\\s*' + singleAttrIndentifier.source + 
+  //   '(?:\\s*(' + singleAttrAssign.source + ')' +
+  //   '\\s*(?:' + singleAttrValue.join('|') + '))?'
+  // )
+
+  var singleAttrIdentifier = /([^\s"'<>/=]+)/;
+  var singleAttrAssign = /(?:=)/;
+  var singleAttrValues = [/"([^"]*)"+/.source, /'([^']*)'+/.source, /([^\s"'=<>`]+)/.source];
+  var attribute = new RegExp('^\\s*' + singleAttrIdentifier.source + '(?:\\s*(' + singleAttrAssign.source + ')' + '\\s*(?:' + singleAttrValues.join('|') + '))?');
+  var index = 0;
   var stack = [];
   var html;
   var currentParent;
@@ -32,7 +48,8 @@
               tag: startTagMatch.tagName,
               lowerCasedtag: startTagMatch.tagName.toLowerCase(),
               parent: currentParent,
-              children: []
+              children: [],
+              attrsList: startTagMatch.attrs
             };
 
             if (!root) {
@@ -57,14 +74,25 @@
           parseEndTag(endTagMatch);
           continue;
         }
+      } else {
+        var text = html.substring(0, textEnd);
+        console.log(text);
+        advance(text.length);
+        currentParent.children.push({
+          type: 3,
+          text: text
+        });
+        continue;
       }
     }
 
+    console.log(html);
     return root;
   }
 
   function advance(n) {
     index += n;
+    console.log(index, index);
     html = html.substring(n);
   }
   /**
@@ -84,22 +112,31 @@
         end: ''
       };
       advance(start[0].length);
-      var end = html.match(startTagClose);
+      var end, attr;
+
+      while (!(end = html.match(startTagClose)) && (attr = html.match(attribute))) {
+        advance(attr[0].length);
+        match.attrs.push({
+          name: attr[1],
+          value: attr[3]
+        });
+        console.log(match, 'match');
+      }
 
       if (end) {
         advance(end[0].length);
         match.end = index;
+        console.log(match, 'match');
         return match;
       }
     }
   }
 
   function parseEndTag(tagName) {
+    console.log(tagName);
     var pos;
 
     for (pos = stack.length - 1; pos >= 0; pos--) {
-      debugger;
-
       if (stack[pos].lowerCasedtag === tagName[1].toLowerCase()) {
         break;
       }
@@ -107,8 +144,11 @@
 
     if (pos >= 0) {
       stack.length = pos;
-      currentParent = stack[pos];
+      currentParent = stack[pos - 1];
     }
+
+    console.log(currentParent, pos);
+    console.log(stack);
   }
 
   return parseHTML;
