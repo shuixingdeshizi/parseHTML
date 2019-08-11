@@ -8,22 +8,6 @@ const startTagClose = new RegExp('^\s*(\/?)>')
 
 const endTag = new RegExp('^<\/' + qnamcCapture + '>')
 
-// const singleAttrIndentifier = /([^\s*"'<>/=]+)/
-
-// const singleAttrAssign = /(?:=)/
-
-// const singleAttrValue = [
-//   /"([^"])"+/.source,
-//   /'([^'])'+/.source,
-//   /([^\s"'=<>]+)/.source
-// ]
-
-// const attribute = new RegExp(
-//   '^\\s*' + singleAttrIndentifier.source + 
-//   '(?:\\s*(' + singleAttrAssign.source + ')' +
-//   '\\s*(?:' + singleAttrValue.join('|') + '))?'
-// )
-
 const singleAttrIdentifier = /([^\s"'<>/=]+)/
 const singleAttrAssign = /(?:=)/
 const singleAttrValues = [
@@ -89,7 +73,6 @@ function parseHTML (template) {
       }
     } else {
       var text = html.substring(0, textEnd)
-      console.log(text)
       advance(text.length)
       currentParent.children.push({
         type: 3,
@@ -98,14 +81,12 @@ function parseHTML (template) {
       continue
     }
   }
-  console.log(html)
   return root
 }
 
 
 function advance (n) {
   index += n
-  console.log(index, index)
   html = html.substring(n)
 }
 
@@ -134,20 +115,17 @@ function parseStartTag () {
         name: attr[1],
         value: attr[3]
       })
-      console.log(match, 'match')
     }
 
     if (end) {
       advance(end[0].length)
       match.end = index
-      console.log(match, 'match')
       return match
     }
   }
 }
 
 function parseEndTag (tagName) {
-  console.log(tagName)
   var pos 
 
   for (pos = stack.length - 1; pos >=0; pos--) {
@@ -160,8 +138,6 @@ function parseEndTag (tagName) {
     stack.length = pos
     currentParent = stack[pos - 1]
   }
-  console.log(currentParent, pos)
-  console.log(stack)
 }
 
 

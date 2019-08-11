@@ -12,8 +12,9 @@
 <body>  
     <div id="app"></div>
     <script>
-        var html = parseHTML('<div><span class="red">hello</span>world</div>')
-        console.log(html)
+            var vnode = parseHTML('<div class="box"><span>hello</span> world</div>')
+            document.write(vnode)
+            console.log(JSON.stringify(vnode))
     </script>
 </body>
 </html>

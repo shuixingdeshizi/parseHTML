@@ -8,19 +8,7 @@
   var qnamcCapture = '(' + ncname + ')';
   var startTagOpen = new RegExp('^<' + qnamcCapture);
   var startTagClose = new RegExp('^\s*(\/?)>');
-  var endTag = new RegExp('^<\/' + qnamcCapture + '>'); // const singleAttrIndentifier = /([^\s*"'<>/=]+)/
-  // const singleAttrAssign = /(?:=)/
-  // const singleAttrValue = [
-  //   /"([^"])"+/.source,
-  //   /'([^'])'+/.source,
-  //   /([^\s"'=<>]+)/.source
-  // ]
-  // const attribute = new RegExp(
-  //   '^\\s*' + singleAttrIndentifier.source + 
-  //   '(?:\\s*(' + singleAttrAssign.source + ')' +
-  //   '\\s*(?:' + singleAttrValue.join('|') + '))?'
-  // )
-
+  var endTag = new RegExp('^<\/' + qnamcCapture + '>');
   var singleAttrIdentifier = /([^\s"'<>/=]+)/;
   var singleAttrAssign = /(?:=)/;
   var singleAttrValues = [/"([^"]*)"+/.source, /'([^']*)'+/.source, /([^\s"'=<>`]+)/.source];
@@ -76,7 +64,6 @@
         }
       } else {
         var text = html.substring(0, textEnd);
-        console.log(text);
         advance(text.length);
         currentParent.children.push({
           type: 3,
@@ -86,13 +73,11 @@
       }
     }
 
-    console.log(html);
     return root;
   }
 
   function advance(n) {
     index += n;
-    console.log(index, index);
     html = html.substring(n);
   }
   /**
@@ -120,20 +105,17 @@
           name: attr[1],
           value: attr[3]
         });
-        console.log(match, 'match');
       }
 
       if (end) {
         advance(end[0].length);
         match.end = index;
-        console.log(match, 'match');
         return match;
       }
     }
   }
 
   function parseEndTag(tagName) {
-    console.log(tagName);
     var pos;
 
     for (pos = stack.length - 1; pos >= 0; pos--) {
@@ -146,9 +128,6 @@
       stack.length = pos;
       currentParent = stack[pos - 1];
     }
-
-    console.log(currentParent, pos);
-    console.log(stack);
   }
 
   return parseHTML;
